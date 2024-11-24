@@ -4,17 +4,21 @@
 # See LICENSE or go to <https://www.apache.org/licenses/LICENSE-2.0> for full license details.
 
 
+import logging
 import os
 from pathlib import Path
 
 from setuptools import setup
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
 PKG_NAME = "openapm"
 VERSION = os.getenv("BUILD_VERSION", "0.1.0.dev0")
 
 
 if __name__ == "__main__":
-    print(f"Building wheel {PKG_NAME}-{VERSION}")
+    logger.info(f"Building wheel {PKG_NAME}-{VERSION}")
 
     # Dynamically set the __version__ attribute
     cwd = Path(__file__).parent.absolute()
