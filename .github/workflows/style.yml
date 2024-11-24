@@ -41,8 +41,8 @@ jobs:
           version: ${{ env.UV_VERSION }}
       - name: Run mypy
         run: |
-          uv export --no-hashes --locked -o src/backend/requirements.txt --project src/backend
-          uv pip install --system -r src/backend/requirements.txt
+          uv export --no-hashes --locked -o server/requirements.txt --project server
+          uv pip install --system -r server/requirements.txt
           mypy --version
           make typing-check
 
