@@ -9,7 +9,7 @@ from pathlib import Path
 
 import yaml
 
-PYTHON_DOCKERFILE_PATH = "Dockerfile"
+PYTHON_DOCKERFILE_PATH = "server/Dockerfile"
 PYTHON_PRECOMMIT_PATH = ".pre-commit-config.yaml"
 PYTHON_PYPROJECT_PATH = "server/pyproject.toml"
 
