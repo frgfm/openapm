@@ -17,12 +17,19 @@ jobs:
       - uses: astral-sh/setup-uv@v3
         with:
           version: ${{ env.UV_VERSION }}
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "22"
       - name: Build, run & check docker
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: openapm
         run: make start
+
+  client:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+        with:
+          version: ${{ env.UV_VERSION }}
+      - name: Build, run & check docker
+        run: uv pip install -e client/.
