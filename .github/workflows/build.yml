@@ -32,4 +32,4 @@ jobs:
         with:
           version: ${{ env.UV_VERSION }}
       - name: Build, run & check docker
-        run: uv pip install -e client/.
+        run: uv pip install --system -e client/.
