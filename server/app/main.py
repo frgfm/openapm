@@ -5,7 +5,6 @@
 
 import logging
 import time
-from datetime import datetime
 
 import sentry_sdk
 from fastapi import Depends, FastAPI, Request, status
@@ -19,7 +18,7 @@ from sentry_sdk.integrations.starlette import StarletteIntegration
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.core.config import settings
-from app.crud import TransactionCRUD
+from app.crud import TransactionCRUD, TransactionPayload
 from app.db import get_session
 from app.models import Transaction
 
@@ -70,16 +69,6 @@ def get_status() -> Status:
 
 def get_transaction_crud(session: AsyncSession = Depends(get_session)) -> TransactionCRUD:
     return TransactionCRUD(session=session)
-
-
-class TransactionPayload(BaseModel):
-    method: str
-    path: str
-    status: int
-    process_time: float
-    client_host: str
-    forwarded_for: str | None
-    timestamp: datetime
 
 
 # Routes

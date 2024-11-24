@@ -4,6 +4,7 @@
 # See LICENSE or go to <https://www.apache.org/licenses/LICENSE-2.0> for full license details.
 
 import logging
+from datetime import datetime
 from typing import Any, Generic, List, Tuple, Type, TypeVar, Union, cast
 
 from asyncpg.exceptions import ForeignKeyViolationError, UniqueViolationError
@@ -105,6 +106,16 @@ class BaseCRUD(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         await self.session.commit()
 
 
-class TransactionCRUD(BaseCRUD[Transaction, Transaction, Transaction]):
+class TransactionPayload(BaseModel):
+    method: str
+    path: str
+    status: int
+    process_time: float
+    client_host: str
+    forwarded_for: str | None
+    timestamp: datetime
+
+
+class TransactionCRUD(BaseCRUD[Transaction, TransactionPayload, Transaction]):
     def __init__(self, session: AsyncSession) -> None:
         super().__init__(session, Transaction)
