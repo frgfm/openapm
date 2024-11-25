@@ -22,4 +22,4 @@ updates:
     schedule:
       interval: "daily"
     allow:
-      - dependency-name: "astral-sh/uv"
+      - dependency-name: "ghcr.io/astral-sh/uv"
