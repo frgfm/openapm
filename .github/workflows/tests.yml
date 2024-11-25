@@ -39,5 +39,5 @@ jobs:
           license: 'Apache-2.0'
           owner: 'François-Guillaume Fernandez'
           starting-year: 2024
-          folders: 'server'
+          folders: 'server,client'
           ignores: 'version.py,__init__.py'

@@ -9,9 +9,10 @@ from pathlib import Path
 
 import yaml
 
-PYTHON_DOCKERFILE_PATH = "server/Dockerfile"
-PYTHON_PRECOMMIT_PATH = ".pre-commit-config.yaml"
-PYTHON_PYPROJECT_PATH = "server/pyproject.toml"
+SERVER_DOCKERFILE_PATH = "server/Dockerfile"
+SERVER_PRECOMMIT_PATH = ".pre-commit-config.yaml"
+SERVER_PYPROJECT_PATH = "server/pyproject.toml"
+CLIENT_PYPROJECT_PATH = "client/pyproject.toml"
 
 
 def main():
@@ -19,28 +20,36 @@ def main():
     deps_dict = {}
     # UV: Dockerfile, precommit, .github
     # Parse Dockerfile
-    with Path(PYTHON_DOCKERFILE_PATH).open("r") as f:
+    with Path(SERVER_DOCKERFILE_PATH).open("r") as f:
         dockerfile = f.read()
     uv_version = re.search(r"ghcr\.io/astral-sh/uv:(\d+\.\d+\.\d+)", dockerfile).group(1)
-    deps_dict["uv"] = [{"file": PYTHON_DOCKERFILE_PATH, "version": uv_version}]
+    deps_dict["uv"] = [{"file": SERVER_DOCKERFILE_PATH, "version": uv_version}]
     # Parse precommit
-    with Path(PYTHON_PRECOMMIT_PATH).open("r") as f:
+    with Path(SERVER_PRECOMMIT_PATH).open("r") as f:
         precommit = yaml.safe_load(f)
 
     for repo in precommit["repos"]:
         if repo["repo"] == "https://github.com/astral-sh/uv-pre-commit":
-            deps_dict["uv"].append({"file": PYTHON_PRECOMMIT_PATH, "version": repo["rev"].lstrip("v")})
+            deps_dict["uv"].append({"file": SERVER_PRECOMMIT_PATH, "version": repo["rev"].lstrip("v")})
         elif repo["repo"] == "https://github.com/charliermarsh/ruff-pre-commit":
-            deps_dict["ruff"] = [{"file": PYTHON_PRECOMMIT_PATH, "version": repo["rev"].lstrip("v")}]
+            deps_dict["ruff"] = [{"file": SERVER_PRECOMMIT_PATH, "version": repo["rev"].lstrip("v")}]
 
     # Parse pyproject.toml
-    with Path(PYTHON_PYPROJECT_PATH).open("rb") as f:
+    with Path(SERVER_PYPROJECT_PATH).open("rb") as f:
         pyproject = tomllib.load(f)
 
     dev_deps = pyproject["tool"]["uv"]["dev-dependencies"]
     for dep in dev_deps:
         if dep.startswith("ruff=="):
-            deps_dict["ruff"].append({"file": PYTHON_PYPROJECT_PATH, "version": dep.split("==")[1]})
+            deps_dict["ruff"].append({"file": SERVER_PYPROJECT_PATH, "version": dep.split("==")[1]})
+
+    with Path(CLIENT_PYPROJECT_PATH).open("rb") as f:
+        pyproject = tomllib.load(f)
+
+    dev_deps = pyproject["project"]["optional-dependencies"]["quality"]
+    for dep in dev_deps:
+        if dep.startswith("ruff=="):
+            deps_dict["ruff"].append({"file": CLIENT_PYPROJECT_PATH, "version": dep.split("==")[1]})
 
     # Parse github/workflows/...
     for workflow_file in Path(".github/workflows").glob("*.yml"):

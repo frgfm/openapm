@@ -50,6 +50,7 @@ dev = [
     "pytest-cov>=4.0.0,<5.0.0",
     "pytest-pretty>=1.0.0,<2.0.0",
     # style
+    "ruff==0.8.0",
     "mypy==1.13.0",
     "types-urllib3>=1.26.25",
     "pre-commit>=3.8.0,<4.0.0"
@@ -78,12 +79,6 @@ no_implicit_optional = true
 check_untyped_defs = true
 implicit_reexport = false
 explicit_package_bases = true
-
-[[tool.mypy.overrides]]
-module = [
-    "requests.*",
-]
-ignore_missing_imports = true
 
 [tool.pytest.ini_options]
 testpaths = ["openapm/"]
