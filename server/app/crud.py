@@ -13,6 +13,7 @@ from pydantic import BaseModel
 from sqlalchemy.exc import IntegrityError
 from sqlmodel import SQLModel, delete, select
 from sqlmodel.ext.asyncio.session import AsyncSession
+from sqlmodel.sql.expression import SelectOfScalar
 
 from app.models import Transaction
 
@@ -69,7 +70,7 @@ class BaseCRUD(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         return entry
 
     async def get_by(self, field_name: str, val: Union[str, int], strict: bool = False) -> Union[ModelType, None]:
-        statement = select(self.model).where(getattr(self.model, field_name) == val)  # type: ignore[var-annotated]
+        statement: SelectOfScalar[ModelType] = select(self.model).where(getattr(self.model, field_name) == val)
         results = await self.session.exec(statement=statement)
         entry = results.one_or_none()
         if strict and entry is None:
@@ -80,7 +81,7 @@ class BaseCRUD(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         return entry
 
     async def fetch_all(self, filter_pair: Union[Tuple[str, Any], None] = None) -> List[ModelType]:
-        statement = select(self.model)  # type: ignore[var-annotated]
+        statement: SelectOfScalar[ModelType] = select(self.model)
         if isinstance(filter_pair, tuple):
             statement = statement.where(getattr(self.model, filter_pair[0]) == filter_pair[1])
         return await self.session.exec(statement=statement)
