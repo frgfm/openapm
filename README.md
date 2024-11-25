@@ -44,11 +44,11 @@ You can find more information in the [documentation](https://frgfm.github.io/ope
 
 ```python
 # Define your model
-from openapm.middlewares import FastAPMMiddleware
+from openapm.middlewares import FastAPIMiddleware
 from fastapi import FastAPI
 
 app = FastAPI()
-app.add_middleware(FastAPMMiddleware(endpoint="https://your-apm-endpoint.com"))
+app.add_middleware(FastAPIMiddleware(endpoint="https://your-apm-endpoint.com"))
 ```
 
 
