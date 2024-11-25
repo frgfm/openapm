@@ -42,6 +42,8 @@ def main():
     for dep in dev_deps:
         if dep.startswith("ruff=="):
             deps_dict["ruff"].append({"file": SERVER_PYPROJECT_PATH, "version": dep.split("==")[1]})
+        elif dep.startswith("mypy=="):
+            deps_dict["mypy"] = [{"file": SERVER_PYPROJECT_PATH, "version": dep.split("==")[1]}]
 
     with Path(CLIENT_PYPROJECT_PATH).open("rb") as f:
         pyproject = tomllib.load(f)
@@ -50,6 +52,8 @@ def main():
     for dep in dev_deps:
         if dep.startswith("ruff=="):
             deps_dict["ruff"].append({"file": CLIENT_PYPROJECT_PATH, "version": dep.split("==")[1]})
+        elif dep.startswith("mypy=="):
+            deps_dict["mypy"].append({"file": SERVER_PYPROJECT_PATH, "version": dep.split("==")[1]})
 
     # Parse github/workflows/...
     for workflow_file in Path(".github/workflows").glob("*.yml"):
