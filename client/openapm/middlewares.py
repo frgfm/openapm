@@ -43,7 +43,7 @@ class FastAPIMiddleware(BaseHTTPMiddleware):
                 "path": request.url.path,
                 "status": response.status_code,
                 "process_time": process_time,
-                "client_host": request.client.host,
+                "client_host": request.client.host,  # type: ignore[union-attr]
                 "forwarded_for": request.headers.get("x-forwarded-for"),
             },
         )
