@@ -1,0 +1,42 @@
+name: pr-merged
+
+on:
+  pull_request:
+    branches: main
+    types: closed
+
+jobs:
+  is-properly-labeled:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      issues: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/setup-python@v5
+      - name: Install requests
+        run: pip install requests pyyaml
+      - name: Process commit and find merger responsible for labeling
+        id: commit
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          MERGER=$(python .github/verify_labels.py ${{ github.repository }} ${{ github.event.pull_request.number  }})
+          echo "merger=${MERGER}" | tee --append $GITHUB_OUTPUT
+      - name: Comment PR
+        uses: actions/github-script@v7
+        if: ${{ steps.commit.outputs.merger != '' }}
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { issue: { number: issue_number }, repo: { owner, repo }  } = context;
+            github.rest.issues.createComment({
+              issue_number,
+              owner,
+              repo,
+              body: 'Hey ${{ steps.commit.outputs.merger }} 👋\nYou merged this PR, but it is not correctly labeled. The list of valid labels is available at https://github.com/${{ github.repository }}/blob/main/.github/pr-labels.yml'
+            });

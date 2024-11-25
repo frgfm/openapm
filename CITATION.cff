@@ -1,0 +1,9 @@
+cff-version: 1.2.0
+type: software
+message: "If you use this software in your work, please cite it as below."
+authors:
+- family-names: "Fernandez"
+  given-names: "François-Guillaume"
+title: "OpenAPM"
+date-released: 2024-11-25
+url: "https://github.com/frgfm/openapm"

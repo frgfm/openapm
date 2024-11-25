@@ -1,0 +1,16 @@
+primary:
+  - "type: feat"
+  - "type: fix"
+  - "type: improvement"
+  - "type: misc"
+
+secondary:
+  - "service: backend"
+  - "service: frontend"
+  - "func: build"
+  - "ext: ci"
+  - "ext: docs"
+  - "ext: tests"
+  - "ext: scripts"
+  - "topic: docs"
+  - "topic: style"

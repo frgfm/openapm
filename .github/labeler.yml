@@ -1,0 +1,66 @@
+# High-level service labels
+'service: server':
+- changed-files:
+  - any-glob-to-any-file: server/*
+
+'service: client':
+- changed-files:
+  - any-glob-to-any-file: client/*
+
+# Secondary
+'ext: ci':
+- changed-files:
+  - any-glob-to-any-file: .github/*
+
+'ext: scripts':
+- changed-files:
+  - any-glob-to-any-file: scripts/*
+
+'ext: docs':
+- changed-files:
+  - any-glob-to-any-file: docs/*
+
+'topic: style':
+- changed-files:
+  - any-glob-to-any-file: .pre-commit-config.yaml
+
+'topic: docs':
+- changed-files:
+  - any-glob-to-any-file:
+    - README.md
+    - CONTRIBUTING.md
+    - CODE_OF_CONDUCT.md
+    - Makefile
+    - .env.example
+
+# Orchestration
+'func: build':
+- changed-files:
+  - any-glob-to-any-file:
+    - server/pyproject.toml
+    - server/uv.lock
+    - docker-compose.*
+    - server/Dockerfile
+
+########################################################
+# Backend-specific
+########################################################
+
+# Database
+'func: migration':
+- changed-files:
+  - any-glob-to-any-file:
+    - server/alembic.ini
+    - server/migrations/*
+
+'module: database':
+- changed-files:
+  - any-glob-to-any-file:
+    - server/app/db.py
+    - server/app/models.py
+
+
+# Tests
+'ext: tests':
+- changed-files:
+  - any-glob-to-any-file: server/tests/*

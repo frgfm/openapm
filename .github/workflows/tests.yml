@@ -1,0 +1,43 @@
+name: tests
+
+on:
+  push:
+    branches: main
+  pull_request:
+    branches: main
+
+env:
+  PYTHON_VERSION: "3.11"
+  UV_VERSION: "0.5.2"
+
+jobs:
+  deps-sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          architecture: x64
+      - uses: astral-sh/setup-uv@v3
+        with:
+          version: ${{ env.UV_VERSION }}
+      - name: Run dependency sync checker
+        run: |
+          uv pip install --system PyYAML
+          make deps-check
+
+  headers:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Check the headers
+        uses: frgfm/validate-python-headers@main
+        with:
+          license: 'Apache-2.0'
+          owner: 'François-Guillaume Fernandez'
+          starting-year: 2024
+          folders: 'server,client'
+          ignore-files: 'version.py,__init__.py'
