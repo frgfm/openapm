@@ -42,8 +42,6 @@ quality = [
     "ruff==0.8.0",
     "mypy==1.13.0",
     "types-urllib3>=1.26.25",
-    "asyncpg-stubs>=0.29.0,<1.0.0",
-    "sqlalchemy-stubs>=0.4.0,<1.0.0",
     "pre-commit>=3.8.0,<4.0.0"
 ]
 dev = [
