@@ -43,6 +43,7 @@ jobs:
         run: |
           uv export --no-hashes --locked -o server/requirements.txt --project server
           uv pip install --system -r server/requirements.txt
+          uv pip install --system -e client/.[quality]
           mypy --version
           make typing-check
 
