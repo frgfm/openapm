@@ -163,3 +163,4 @@ cython_debug/
 
 # UV
 server/requirements.txt
+client/openapm/version.py
