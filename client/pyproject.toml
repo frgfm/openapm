@@ -42,6 +42,7 @@ quality = [
     "ruff==0.8.0",
     "mypy==1.13.0",
     "types-urllib3>=1.26.25",
+    "types-requests>=2.31.0,<3.0.0",
     "pre-commit>=3.8.0,<4.0.0"
 ]
 dev = [
@@ -53,6 +54,7 @@ dev = [
     "ruff==0.8.0",
     "mypy==1.13.0",
     "types-urllib3>=1.26.25",
+    "types-requests>=2.31.0,<3.0.0",
     "pre-commit>=3.8.0,<4.0.0"
 ]
 
