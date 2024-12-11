@@ -1,4 +1,5 @@
 from typing import AsyncGenerator
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 from sqlmodel.ext.asyncio.session import AsyncSession
@@ -9,9 +10,16 @@ from app.main import app
 
 @pytest.fixture
 async def async_session() -> AsyncGenerator[AsyncSession, None]:
-    # This would typically set up a test database
-    # For now, we'll just mock the session
-    return AsyncSession()
+    # Create a mock session with async methods
+    mock_session = MagicMock(spec=AsyncSession)
+
+    # Mock the async methods
+    mock_session.commit = AsyncMock()
+    mock_session.refresh = AsyncMock()
+    mock_session.rollback = AsyncMock()
+    mock_session.exec = AsyncMock()
+
+    return mock_session
 
 
 @pytest.fixture

@@ -1,9 +1,6 @@
 from datetime import datetime
 
 import pytest
-from asyncpg.exceptions import ForeignKeyViolationError, UniqueViolationError
-from fastapi import HTTPException
-from sqlalchemy.exc import IntegrityError
 
 from app.crud import TransactionCRUD, TransactionPayload
 from app.models import Transaction
