@@ -55,6 +55,9 @@ lock: ${PYTHON_CONFIG_FILE}
 req: ${PYTHON_CONFIG_FILE} ${PYTHON_LOCK_FILE}
 	uv export --no-hashes --locked --no-dev -q -o ${PYTHON_REQ_FILE} --project ${BACKEND_DIR}
 
+req-dev: ${PYTHON_CONFIG_FILE} ${PYTHON_LOCK_FILE}
+	uv export --no-hashes --locked --no-dev --extra test -q -o ${PYTHON_REQ_FILE} --project ${BACKEND_DIR}
+
 # Build the docker
 build: req ${DOCKERFILE_PATH}
 	docker build --platform linux/amd64 ${BACKEND_DIR} -t ${DOCKER_NAMESPACE}/${DOCKER_REPO}:${DOCKER_TAG}
@@ -69,3 +72,8 @@ start: build docker-compose.yml
 # Run the docker
 stop: docker-compose.yml
 	docker compose down
+
+test: req-dev ${DOCKERFILE_PATH} docker-compose.test.yml
+	docker compose -f docker-compose.test.yml up -d --wait --build
+	- docker compose exec -T backend pytest tests/test_crud.py
+	docker compose -f docker-compose.test.yml down
