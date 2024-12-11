@@ -68,9 +68,9 @@ def main():
     # Assert all deps are in sync
     troubles = []
     for dep, versions in deps_dict.items():
-        _versions = {v["version"] for v in versions}
-        if len(_versions) != 1:
-            inv_dict = {v: set() for v in _versions}
+        versions_ = {v["version"] for v in versions}
+        if len(versions_) != 1:
+            inv_dict = {v: set() for v in versions_}
             for version in versions:
                 inv_dict[version["version"]].add(version["file"])
             troubles.extend([

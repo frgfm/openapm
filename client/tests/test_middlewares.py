@@ -3,7 +3,6 @@ from unittest.mock import Mock, patch
 import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
-
 from openapm.middlewares import FastAPIMiddleware
 
 
@@ -20,7 +19,7 @@ def app(mock_endpoint):
     app.add_middleware(FastAPIMiddleware, endpoint=mock_endpoint)
 
     @app.get("/test")
-    def test_route():
+    def test_route() -> dict[str, str]:
         return {"message": "test"}
 
     return app
