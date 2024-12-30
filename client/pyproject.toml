@@ -40,7 +40,7 @@ test = [
 ]
 quality = [
     "ruff==0.8.0",
-    "mypy==1.13.0",
+    "mypy==1.14.0",
     "types-urllib3>=1.26.25",
     "types-requests>=2.31.0,<3.0.0",
     "pre-commit>=3.8.0,<5.0.0"
@@ -52,7 +52,7 @@ dev = [
     "pytest-pretty>=1.0.0,<2.0.0",
     # style
     "ruff==0.8.0",
-    "mypy==1.13.0",
+    "mypy==1.14.0",
     "types-urllib3>=1.26.25",
     "types-requests>=2.31.0,<3.0.0",
     "pre-commit>=3.8.0,<5.0.0"

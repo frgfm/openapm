@@ -53,7 +53,7 @@ def main():
         if dep.startswith("ruff=="):
             deps_dict["ruff"].append({"file": CLIENT_PYPROJECT_PATH, "version": dep.split("==")[1]})
         elif dep.startswith("mypy=="):
-            deps_dict["mypy"].append({"file": SERVER_PYPROJECT_PATH, "version": dep.split("==")[1]})
+            deps_dict["mypy"].append({"file": CLIENT_PYPROJECT_PATH, "version": dep.split("==")[1]})
 
     # Parse github/workflows/...
     for workflow_file in Path(".github/workflows").glob("*.yml"):
