@@ -41,7 +41,8 @@ jobs:
           starting-year: 2024
           folders: 'server,client'
           ignore-files: 'version.py,__init__.py'
-  
+          ignore-folders: 'client/tests,server/tests'
+
   server:
     runs-on: ubuntu-latest
     steps:
@@ -56,10 +57,11 @@ jobs:
           POSTGRES_DB: openapm
         run: make test-server
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           file: ./coverage-server.xml
+          slug: frgfm/openapm
           flags: server
           fail_ci_if_error: true
 
@@ -81,5 +83,6 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           file: ./coverage.xml
+          slug: frgfm/openapm
           flags: client
           fail_ci_if_error: true
