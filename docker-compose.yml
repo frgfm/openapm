@@ -19,7 +19,7 @@ services:
       retries: 3
 
   backend:
-    image: openapm/backend:latest
+    image: ghcr.io/frgfm/openapm:latest
     platform: linux/amd64
     build:
       context: ./server

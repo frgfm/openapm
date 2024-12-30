@@ -5,8 +5,8 @@ SERVER_CONFIG_FILE = ${BACKEND_DIR}/pyproject.toml
 CLIENT_CONFIG_FILE = ${CLIENT_DIR}/pyproject.toml
 PYTHON_LOCK_FILE = ${BACKEND_DIR}/uv.lock
 PYTHON_REQ_FILE = ${BACKEND_DIR}/requirements.txt
-DOCKER_NAMESPACE ?= openapm
-DOCKER_REPO ?= backend
+DOCKER_NAMESPACE ?= ghcr.io/frgfm
+DOCKER_REPO ?= openapm
 DOCKER_TAG ?= latest
 
 ########################################################
