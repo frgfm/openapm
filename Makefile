@@ -2,11 +2,13 @@ DOCKERFILE_PATH = ./server/Dockerfile
 BACKEND_DIR = ./server
 CLIENT_DIR = ./client
 SERVER_CONFIG_FILE = ${BACKEND_DIR}/pyproject.toml
-CLIENT_CONFIG_FILE = ${CLIENT_DIR}/pyproject.toml
 PYTHON_LOCK_FILE = ${BACKEND_DIR}/uv.lock
 PYTHON_REQ_FILE = ${BACKEND_DIR}/requirements.txt
-DOCKER_NAMESPACE ?= openapm
-DOCKER_REPO ?= backend
+SERVER_TEST_DIR = ${BACKEND_DIR}/tests
+CLIENT_CONFIG_FILE = ${CLIENT_DIR}/pyproject.toml
+CLIENT_TEST_DIR = ${CLIENT_DIR}/tests
+DOCKER_NAMESPACE ?= ghcr.io/frgfm
+DOCKER_REPO ?= openapm
 DOCKER_TAG ?= latest
 
 ########################################################
@@ -52,6 +54,9 @@ lock: ${PYTHON_CONFIG_FILE}
 req: ${PYTHON_CONFIG_FILE} ${PYTHON_LOCK_FILE}
 	uv export --no-hashes --locked --no-dev -q -o ${PYTHON_REQ_FILE} --project ${BACKEND_DIR}
 
+req-dev: ${PYTHON_CONFIG_FILE} ${PYTHON_LOCK_FILE}
+	uv export --no-hashes --locked --no-dev --extra test -q -o ${PYTHON_REQ_FILE} --project ${BACKEND_DIR}
+
 # Build the docker
 build: req ${DOCKERFILE_PATH}
 	docker build --platform linux/amd64 ${BACKEND_DIR} -t ${DOCKER_NAMESPACE}/${DOCKER_REPO}:${DOCKER_TAG}
@@ -66,3 +71,15 @@ start: build docker-compose.yml
 # Run the docker
 stop: docker-compose.yml
 	docker compose down
+
+test-server: req-dev ${DOCKERFILE_PATH} docker-compose.test.yml ${SERVER_TEST_DIR}
+	docker compose -f docker-compose.test.yml up -d --wait --build
+	- docker compose -f docker-compose.test.yml exec -T backend pytest tests/ --cov=app --cov-report xml
+	- docker compose -f docker-compose.test.yml cp backend:/app/coverage.xml ./coverage-server.xml
+	docker compose -f docker-compose.test.yml down
+
+install-client: ${CLIENT_CONFIG_FILE}
+	uv pip install --system -e "${CLIENT_DIR}[test]"
+
+test-client: install-client ${CLIENT_CONFIG_FILE} ${CLIENT_TEST_DIR}
+	pytest ${CLIENT_TEST_DIR}  --cov=client/openapm --cov-report xml

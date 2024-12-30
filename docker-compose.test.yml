@@ -10,8 +10,6 @@ services:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=${POSTGRES_DB}
-    volumes:
-      - postgres_data:/var/lib/postgresql/data/
     healthcheck:
       test: ["CMD-SHELL", "sh -c 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}'"]
       interval: 10s
@@ -33,6 +31,7 @@ services:
       - DEBUG=true
     volumes:
       - ./server/app/:/app/app/
+      - ./server/tests/:/app/tests/
     command: >
       sh -c "python app/db.py
       && uvicorn app.main:app --reload --host 0.0.0.0 --port 5050 --proxy-headers --use-colors --log-level info"
@@ -41,6 +40,3 @@ services:
       interval: 10s
       timeout: 3s
       retries: 5
-
-volumes:
-  postgres_data:
