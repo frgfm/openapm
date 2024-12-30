@@ -72,5 +72,5 @@ stop: docker-compose.yml
 
 test: req-dev ${DOCKERFILE_PATH} docker-compose.test.yml
 	docker compose -f docker-compose.test.yml up -d --wait --build
-	- docker compose exec -T backend pytest tests/test_crud.py
+	- docker compose exec -T backend pytest tests/
 	docker compose -f docker-compose.test.yml down

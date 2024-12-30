@@ -1,63 +1,74 @@
 from datetime import datetime
 
 import pytest
-from fastapi import status
 from httpx import AsyncClient
+from sqlmodel.ext.asyncio.session import AsyncSession
 
-from app.crud import TransactionCRUD
-from app.main import app
 from app.models import Transaction
 
-# Mock data
-VALID_TRANSACTION = {
-    "method": "GET",
-    "path": "/api/test",
-    "status": 200,
-    "process_time": 0.1234,
-    "client_host": "127.0.0.1",
-    "forwarded_for": None,
-    "timestamp": datetime.utcnow().isoformat(),
-}
-
 
 @pytest.mark.asyncio
-async def test_create_transaction_success(mocker):
-    # Mock the database session and CRUD
-    async def mock_create(self, payload):
-        return Transaction(**payload.model_dump(), id=1)
+async def test_create_transaction(async_client: AsyncClient, async_session: AsyncSession) -> None:
+    # Test data
+    transaction_data = {
+        "method": "GET",
+        "path": "/api/v1/test",
+        "status": 200,
+        "process_time": 0.1234,
+        "client_host": "127.0.0.1",
+        "forwarded_for": None,
+        "timestamp": datetime.utcnow().isoformat(),
+    }
 
-    mocker.patch.object(TransactionCRUD, "create", mock_create)
+    # Make request
+    response = await async_client.post("/transactions", json=transaction_data)
 
-    async with AsyncClient(app=app, base_url="http://test") as client:
-        response = await client.post("/transaction", json=VALID_TRANSACTION)
-
-    assert response.status_code == status.HTTP_201_CREATED
+    assert response.status_code == 201
     data = response.json()
-    assert data["method"] == VALID_TRANSACTION["method"]
-    assert data["path"] == VALID_TRANSACTION["path"]
-    assert data["id"] == 1
+
+    # Check response data
+    assert data["method"] == transaction_data["method"]
+    assert data["path"] == transaction_data["path"]
+    assert data["status"] == transaction_data["status"]
+    assert data["process_time"] == transaction_data["process_time"]
+    assert data["client_host"] == transaction_data["client_host"]
+    assert data["forwarded_for"] == transaction_data["forwarded_for"]
+    assert "id" in data
+    assert "logged_at" in data
+
+    # Verify database entry
+    db_transaction = await async_session.get(Transaction, data["id"])
+    assert db_transaction is not None
+    assert db_transaction.method == transaction_data["method"]
+    assert db_transaction.path == transaction_data["path"]
 
 
 @pytest.mark.asyncio
-async def test_create_transaction_invalid_data():
-    invalid_data = VALID_TRANSACTION.copy()
-    del invalid_data["method"]  # Remove required field
+async def test_create_transaction_invalid_data(async_client: AsyncClient, async_session: AsyncSession) -> None:
+    # Missing required fields
+    invalid_data = {
+        "method": "GET",
+        "path": "/api/v1/test",
+        # missing other required fields
+    }
 
-    async with AsyncClient(app=app, base_url="http://test") as client:
-        response = await client.post("/transaction", json=invalid_data)
-
-    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+    response = await async_client.post("/transactions", json=invalid_data)
+    assert response.status_code == 422
 
 
 @pytest.mark.asyncio
-async def test_create_transaction_db_error(mocker):
-    # Mock database error
-    async def mock_create_error(self, payload):
-        raise Exception("Database error")
+async def test_create_transaction_with_forwarded_for(async_client: AsyncClient, async_session: AsyncSession) -> None:
+    transaction_data = {
+        "method": "POST",
+        "path": "/api/v1/test",
+        "status": 201,
+        "process_time": 0.5678,
+        "client_host": "127.0.0.1",
+        "forwarded_for": "10.0.0.1",
+        "timestamp": datetime.utcnow().isoformat(),
+    }
 
-    mocker.patch.object(TransactionCRUD, "create", mock_create_error)
-
-    async with AsyncClient(app=app, base_url="http://test") as client:
-        response = await client.post("/transaction", json=VALID_TRANSACTION)
-
-    assert response.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
+    response = await async_client.post("/transactions", json=transaction_data)
+    assert response.status_code == 201
+    data = response.json()
+    assert data["forwarded_for"] == "10.0.0.1"

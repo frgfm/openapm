@@ -1,36 +1,43 @@
-from typing import AsyncGenerator
-from unittest.mock import AsyncMock, MagicMock
+import asyncio
+from typing import AsyncGenerator, Generator
 
 import pytest
+import pytest_asyncio
+from httpx import AsyncClient
+from sqlalchemy.orm import sessionmaker
+from sqlmodel import SQLModel, text
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from app.db import get_session
+from app.db import engine
 from app.main import app
 
 
-@pytest.fixture
-async def async_session() -> AsyncGenerator[AsyncSession, None]:
-    # Create a mock session with async methods
-    mock_session = MagicMock(spec=AsyncSession)
-
-    # Mock the async methods
-    mock_session.commit = AsyncMock()
-    mock_session.refresh = AsyncMock()
-    mock_session.rollback = AsyncMock()
-    mock_session.exec = AsyncMock()
-
-    return mock_session
+@pytest.fixture(scope="session")
+def event_loop(request) -> Generator:
+    loop = asyncio.get_event_loop_policy().new_event_loop()
+    yield loop
+    loop.close()
 
 
-@pytest.fixture
-def override_get_session(async_session: AsyncSession):
-    async def get_session_override():
-        yield async_session
-
-    app.dependency_overrides[get_session] = get_session_override
-    return async_session
+@pytest_asyncio.fixture(scope="function")
+async def async_client() -> AsyncGenerator[AsyncClient, None]:
+    async with AsyncClient(app=app, base_url="http://api.localhost:5050", follow_redirects=True) as client:
+        yield client
 
 
-@pytest.fixture(autouse=True)
-def setup_db(override_get_session):
-    pass
+@pytest_asyncio.fixture(scope="function")
+async def async_session() -> AsyncSession:
+    async with engine.begin() as conn:
+        await conn.run_sync(SQLModel.metadata.create_all)
+
+    async_session_maker = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
+
+    async with async_session_maker() as session:
+        async with session.begin():
+            for table in reversed(SQLModel.metadata.sorted_tables):
+                await session.exec(table.delete())
+                if hasattr(table.c, "id"):
+                    await session.exec(text(f"ALTER SEQUENCE {table.name}_id_seq RESTART WITH 1"))
+
+        yield session
+        await session.rollback()

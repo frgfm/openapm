@@ -5,6 +5,7 @@
 
 import logging
 import time
+from datetime import datetime
 
 import sentry_sdk
 from fastapi import Depends, FastAPI, Request, status
@@ -18,7 +19,6 @@ from sentry_sdk.integrations.starlette import StarletteIntegration
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.core.config import settings
-from app.crud import TransactionCRUD, TransactionPayload
 from app.db import get_session
 from app.models import Transaction
 
@@ -67,18 +67,26 @@ def get_status() -> Status:
     return Status(status="ok")
 
 
-def get_transaction_crud(session: AsyncSession = Depends(get_session)) -> TransactionCRUD:
-    return TransactionCRUD(session=session)
+class TransactionPayload(BaseModel):
+    method: str
+    path: str
+    status: int
+    process_time: float
+    client_host: str
+    forwarded_for: str | None
+    timestamp: datetime
 
 
 # Routes
 @app.post(
-    "/transaction", status_code=status.HTTP_201_CREATED, summary="Log a backend operation", include_in_schema=True
+    "/transactions", status_code=status.HTTP_201_CREATED, summary="Log a backend operation", include_in_schema=True
 )
-async def log_transaction(
-    payload: TransactionPayload, transactions: TransactionCRUD = Depends(get_transaction_crud)
-) -> Transaction:
-    return await transactions.create(payload)
+async def log_transaction(payload: TransactionPayload, session: AsyncSession = Depends(get_session)) -> Transaction:
+    entry = Transaction.model_validate(payload)
+    session.add(entry)
+    await session.commit()
+    await session.refresh(entry)
+    return entry
 
 
 # Middleware
