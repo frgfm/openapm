@@ -18,17 +18,13 @@ install-quality: ${PYTHON_CONFIG_FILE}
 	uv export --no-hashes --locked --only-dev -o ${PYTHON_REQ_FILE} --project ${BACKEND_DIR}
 	uv pip install --system -r ${PYTHON_REQ_FILE}
 
-lint-check: ${SERVER_CONFIG_FILE} ${CLIENT_CONFIG_FILE}
-	ruff format --check ${BACKEND_DIR} --config ${SERVER_CONFIG_FILE}
-	ruff check ${BACKEND_DIR} --config ${SERVER_CONFIG_FILE}
-	ruff format --check ${CLIENT_DIR} --config ${CLIENT_CONFIG_FILE}
-	ruff check ${CLIENT_DIR} --config ${CLIENT_CONFIG_FILE}
+lint-check: ${SERVER_CONFIG_FILE}
+	ruff format --check . --config ${SERVER_CONFIG_FILE}
+	ruff check . --config ${SERVER_CONFIG_FILE}
 
-lint-format: ${SERVER_CONFIG_FILE} ${CLIENT_CONFIG_FILE}
-	ruff format ${BACKEND_DIR} --config ${SERVER_CONFIG_FILE}
-	ruff check --fix ${BACKEND_DIR} --config ${SERVER_CONFIG_FILE}
-	ruff format ${CLIENT_DIR} --config ${CLIENT_CONFIG_FILE}
-	ruff check --fix ${CLIENT_DIR} --config ${CLIENT_CONFIG_FILE}
+lint-format: ${SERVER_CONFIG_FILE}
+	ruff format . --config ${SERVER_CONFIG_FILE}
+	ruff check --fix . --config ${SERVER_CONFIG_FILE}
 
 precommit: ${PYTHON_CONFIG_FILE} .pre-commit-config.yaml
 	pre-commit run --all-files
