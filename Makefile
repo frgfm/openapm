@@ -17,6 +17,7 @@ DOCKER_TAG ?= latest
 install-quality: ${PYTHON_CONFIG_FILE}
 	uv export --no-hashes --locked --only-dev -o ${PYTHON_REQ_FILE} --project ${BACKEND_DIR}
 	uv pip install --system -r ${PYTHON_REQ_FILE}
+	uv pip install --system -e "${CLIENT_DIR}[quality]"
 
 lint-check: ${SERVER_CONFIG_FILE}
 	ruff format --check . --config ${SERVER_CONFIG_FILE}
