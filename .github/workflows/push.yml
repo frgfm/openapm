@@ -4,7 +4,7 @@ on:
     branches: main
 
 env:
-  UV_VERSION: "0.5.7"
+  UV_VERSION: "0.5.13"
   BACKEND_IMAGE: openapm
 
 jobs:
@@ -15,7 +15,7 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v4
+      - uses: astral-sh/setup-uv@v5
         with:
           version: ${{ env.UV_VERSION }}
       - name: Build docker image

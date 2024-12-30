@@ -17,6 +17,10 @@ updates:
       - dependency-name: "ruff"
       - dependency-name: "mypy"
       - dependency-name: "pre-commit"
+      - dependency-name: "fastapi"
+      - dependency-name: "sqlmodel"
+      - dependency-name: "uvicorn"
+      - dependency-name: "pytest"
   - package-ecosystem: "pip"
     directory: "client/"
     schedule:
@@ -25,6 +29,7 @@ updates:
       - dependency-name: "ruff"
       - dependency-name: "mypy"
       - dependency-name: "pre-commit"
+      - dependency-name: "pytest"
   - package-ecosystem: "docker"
     directory: "server/"
     schedule:

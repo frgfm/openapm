@@ -33,8 +33,8 @@ test = [
 
 [tool.uv]
 dev-dependencies = [
-    "ruff==0.8.2",
-    "mypy==1.13.0",
+    "ruff==0.8.4",
+    "mypy==1.14.0",
     "types-urllib3>=1.26.25",
     "asyncpg-stubs>=0.29.0,<1.0.0",
     "sqlalchemy-stubs>=0.4.0,<1.0.0",
@@ -105,11 +105,12 @@ exclude = [".git"]
 docstring-quotes = "double"
 
 [tool.ruff.lint.isort]
-known-first-party = ["app", "tests"]
+known-first-party = ["app", "tests", "openapm"]
 known-third-party = ["fastapi"]
 
 [tool.ruff.lint.per-file-ignores]
 "**/__init__.py" = ["I001", "F401", "CPY001"]
+"**/version.py" = ["CPY001"]
 "scripts/**.py" = ["D", "T201", "S101", "ANN", "RUF030"]
 ".github/**.py" = ["D", "T201", "ANN"]
 "server/tests/**.py" = ["D103", "CPY001", "S101", "T201", "ANN001", "ANN201", "ANN202", "ARG001", "RUF029", "RUF030", "DTZ003"]

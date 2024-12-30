@@ -39,20 +39,8 @@ test = [
     "pytest-pretty>=1.0.0,<2.0.0"
 ]
 quality = [
-    "ruff==0.8.2",
-    "mypy==1.13.0",
-    "types-urllib3>=1.26.25",
-    "types-requests>=2.31.0,<3.0.0",
-    "pre-commit>=3.8.0,<5.0.0"
-]
-dev = [
-    # test
-    "pytest>=8.3.3,<9.0.0",
-    "pytest-cov>=4.0.0,<5.0.0",
-    "pytest-pretty>=1.0.0,<2.0.0",
-    # style
-    "ruff==0.8.2",
-    "mypy==1.13.0",
+    "ruff==0.8.4",
+    "mypy==1.14.0",
     "types-urllib3>=1.26.25",
     "types-requests>=2.31.0,<3.0.0",
     "pre-commit>=3.8.0,<5.0.0"
@@ -69,79 +57,6 @@ zip-safe = true
 [tool.setuptools.packages.find]
 exclude = ["docs*", "tests*"]
 
-
-[tool.ruff]
-line-length = 120
-target-version = "py311"
-preview = true
-
-[tool.ruff.lint]
-select = [
-    "F",  # pyflakes
-    "E",  # pycodestyle errors
-    "W",  # pycodestyle warnings
-    "I",  # isort
-    "N",  # pep8-naming
-    # "D101", "D103",  # pydocstyle missing docstring in public function/class
-    "D201","D202","D207","D208","D214","D215","D300","D301","D417", "D419",  # pydocstyle
-    "YTT",  # flake8-2020
-    "ANN",  # flake8-annotations
-    "ASYNC",  # flake8-async
-    "S",  # flake8-bandit
-    "BLE",  # flake8-blind-except
-    "B",  # flake8-bugbear
-    "A",  # flake8-builtins
-    "COM",  # flake8-commas
-    "CPY",  # flake8-copyright
-    "C4",  # flake8-comprehensions
-    "DTZ",  # flake8-datetimez
-    "T10",  # flake8-debugger
-    "ISC",  # flake8-implicit-str-concat
-    "ICN",  # flake8-import-conventions
-    "LOG",  # flake8-logging
-    "PIE",  # flake8-pie
-    "T20",  # flake8-print
-    "PYI",  # flake8-pyi
-    "PT",  # flake8-pytest-style
-    "RET",  # flake8-return
-    "SIM",  # flake8-simplify
-    "ARG",  # flake8-unused-arguments
-    "PTH",  # flake8-use-pathlib
-    "PERF",  # perflint
-    "NPY",  # numpy
-    "FURB",  # refurb
-    "RUF",  # ruff specific
-]
-ignore = [
-    "E501",  # line too long, handled by black
-    "B008",  # do not perform function calls in argument defaults
-    "B904",  # raise from
-    "C901",  # too complex
-    "F403",  # star imports
-    "E731",  # lambda assignment
-    "C416",  # list comprehension to list()
-    "ANN002",  # missing type annotations on *args
-    "ANN003",  # missing type annotations on **kwargs
-    "COM812",  # trailing comma missing
-    "ISC001",  # implicit string concatenation (handled by format)
-]
-exclude = [".git"]
-
-[tool.ruff.lint.flake8-quotes]
-docstring-quotes = "double"
-
-[tool.ruff.lint.isort]
-known-first-party = ["openapm"]
-known-third-party = ["fastapi"]
-
-[tool.ruff.lint.per-file-ignores]
-"**/__init__.py" = ["I001", "F401", "CPY001"]
-"**/version.py" = ["CPY001"]
-"client/tests/**.py" = ["ANN202", "CPY001", "S101", "T201", "ANN001", "ANN201", "ARG001", "RUF029", "RUF030", "DTZ003"]
-
-[tool.ruff.format]
-quote-style = "double"
-indent-style = "space"
 
 [tool.mypy]
 python_version = "3.11"
