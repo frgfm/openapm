@@ -74,11 +74,12 @@ stop: docker-compose.yml
 
 test-server: req-dev ${DOCKERFILE_PATH} docker-compose.test.yml ${SERVER_TEST_DIR}
 	docker compose -f docker-compose.test.yml up -d --wait --build
-	- docker compose exec -T backend pytest tests/ --cov=app
+	- docker compose -f docker-compose.test.yml exec -T backend pytest tests/ --cov=app --cov-report xml
+	- docker compose -f docker-compose.test.yml cp backend:/app/coverage.xml ./coverage-server.xml
 	docker compose -f docker-compose.test.yml down
 
 install-client: ${CLIENT_CONFIG_FILE}
 	uv pip install --system -e "${CLIENT_DIR}[test]"
 
 test-client: install-client ${CLIENT_CONFIG_FILE} ${CLIENT_TEST_DIR}
-	pytest ${CLIENT_TEST_DIR}  --cov=client/openapm
+	pytest ${CLIENT_TEST_DIR}  --cov=client/openapm --cov-report xml

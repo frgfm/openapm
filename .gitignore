@@ -164,3 +164,8 @@ cython_debug/
 # UV
 server/requirements.txt
 client/openapm/version.py
+
+# Coverage
+coverage.xml
+coverage-server.xml
+coverage-client.xml
