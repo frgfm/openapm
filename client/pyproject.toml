@@ -39,7 +39,7 @@ test = [
     "pytest-pretty>=1.0.0,<2.0.0"
 ]
 quality = [
-    "ruff==0.8.0",
+    "ruff==0.8.4",
     "mypy==1.14.0",
     "types-urllib3>=1.26.25",
     "types-requests>=2.31.0,<3.0.0",
@@ -51,7 +51,7 @@ dev = [
     "pytest-cov>=4.0.0,<5.0.0",
     "pytest-pretty>=1.0.0,<2.0.0",
     # style
-    "ruff==0.8.0",
+    "ruff==0.8.4",
     "mypy==1.14.0",
     "types-urllib3>=1.26.25",
     "types-requests>=2.31.0,<3.0.0",
