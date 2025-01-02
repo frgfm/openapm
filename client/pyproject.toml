@@ -40,7 +40,7 @@ test = [
     "pytest-pretty>=1.0.0,<2.0.0"
 ]
 quality = [
-    "ruff==0.8.4",
+    "ruff==0.8.5",
     "mypy==1.14.0",
     "types-urllib3>=1.26.25",
     "types-requests>=2.31.0,<3.0.0",
